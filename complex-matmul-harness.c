@@ -212,12 +212,12 @@ void calcSum(struct complex ** A, struct complex ** B, int a_cols, int i, int j,
   }
   C_elem->real = r0;
   C_elem->imag = im0;
-  (C_elem+(sizeof(struct complex)))->real = r1;
-  (C_elem+(sizeof(struct complex)))->imag = im1;
-  (C_elem+(sizeof(struct complex)*2))->real = r2;
-  (C_elem+(sizeof(struct complex)*2))->imag = im2;
-  (C_elem+(sizeof(struct complex)*3))->real = r3;
-  (C_elem+(sizeof(struct complex)*3))->imag = im3;
+  (C_elem+8)->real = r1;
+  (C_elem+8)->imag = im1;
+  (C_elem+16)->real = r2;
+  (C_elem+16)->imag = im2;
+  (C_elem+24)->real = r3;
+  (C_elem+24)->imag = im3;
 }
 
 void team_matmul(struct complex ** A, struct complex ** B, struct complex ** C, int a_rows, int a_cols, int b_cols) {
