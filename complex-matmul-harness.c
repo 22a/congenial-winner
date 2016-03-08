@@ -163,211 +163,6 @@ void calcSumOld(struct complex ** A, struct complex ** B, int a_cols, int i, int
   C_elem->imag = im;
 }
 
-void calcSum(struct complex ** A, struct complex ** B, int a_cols, int i, int j, struct complex * C_elem, int j_inc) {
-  int k;
-  float r0 = 0.0;
-  float r1 = 0.0;
-  float r2 = 0.0;
-  float r3 = 0.0;
-  float r4 = 0.0;
-  float r5 = 0.0;
-  float r6 = 0.0;
-  float r7 = 0.0;
-  float im0 = 0.0;
-  float im1 = 0.0;
-  float im2 = 0.0;
-  float im3 = 0.0;
-  float im4 = 0.0;
-  float im5 = 0.0;
-  float im6 = 0.0;
-  float im7 = 0.0;
-  switch (j_inc){
-    case 0:
-      printf("this shouldn't happen");
-      break;
-
-    case 1:
-      for (k = 0; k < a_cols; k++){
-        r0 += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
-        im0 += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
-      }
-      C_elem->real = r0;
-      C_elem->imag = im0;
-      break;
-
-    case 2:
-      for (k = 0; k < a_cols; k++){
-        r0 += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
-        im0 += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
-        r1 += A[i][k].real * B[k][j+1].real - A[i][k].imag * B[k][j+1].imag;
-        im1 += A[i][k].real * B[k][j+1].imag + A[i][k].imag * B[k][j+1].real;
-      }
-      C_elem->real = r0;
-      C_elem->imag = im0;
-      C_elem[1].real = r1;
-      C_elem[1].imag = im1;
-      break;
-
-    case 3:
-      for (k = 0; k < a_cols; k++){
-        r0 += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
-        im0 += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
-        r1 += A[i][k].real * B[k][j+1].real - A[i][k].imag * B[k][j+1].imag;
-        im1 += A[i][k].real * B[k][j+1].imag + A[i][k].imag * B[k][j+1].real;
-        r2 += A[i][k].real * B[k][j+2].real - A[i][k].imag * B[k][j+2].imag;
-        im2 += A[i][k].real * B[k][j+2].imag + A[i][k].imag * B[k][j+2].real;
-      }
-      C_elem->real = r0;
-      C_elem->imag = im0;
-      C_elem[1].real = r1;
-      C_elem[1].imag = im1;
-      C_elem[2].real = r2;
-      C_elem[2].imag = im2;
-      break;
-
-    case 4:
-      for (k = 0; k < a_cols; k++){
-        r0 += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
-        im0 += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
-        r1 += A[i][k].real * B[k][j+1].real - A[i][k].imag * B[k][j+1].imag;
-        im1 += A[i][k].real * B[k][j+1].imag + A[i][k].imag * B[k][j+1].real;
-        r2 += A[i][k].real * B[k][j+2].real - A[i][k].imag * B[k][j+2].imag;
-        im2 += A[i][k].real * B[k][j+2].imag + A[i][k].imag * B[k][j+2].real;
-        r3 += A[i][k].real * B[k][j+3].real - A[i][k].imag * B[k][j+3].imag;
-        im3 += A[i][k].real * B[k][j+3].imag + A[i][k].imag * B[k][j+3].real;
-      }
-      C_elem->real = r0;
-      C_elem->imag = im0;
-      C_elem[1].real = r1;
-      C_elem[1].imag = im1;
-      C_elem[2].real = r2;
-      C_elem[2].imag = im2;
-      C_elem[3].real = r3;
-      C_elem[3].imag = im3;
-      break;
-    case 5:
-      for (k = 0; k < a_cols; k++){
-        r0 += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
-        im0 += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
-        r1 += A[i][k].real * B[k][j+1].real - A[i][k].imag * B[k][j+1].imag;
-        im1 += A[i][k].real * B[k][j+1].imag + A[i][k].imag * B[k][j+1].real;
-        r2 += A[i][k].real * B[k][j+2].real - A[i][k].imag * B[k][j+2].imag;
-        im2 += A[i][k].real * B[k][j+2].imag + A[i][k].imag * B[k][j+2].real;
-        r3 += A[i][k].real * B[k][j+3].real - A[i][k].imag * B[k][j+3].imag;
-        im3 += A[i][k].real * B[k][j+3].imag + A[i][k].imag * B[k][j+3].real;
-        r4 += A[i][k].real * B[k][j+4].real - A[i][k].imag * B[k][j+4].imag;
-        im4 += A[i][k].real * B[k][j+4].imag + A[i][k].imag * B[k][j+4].real;
-      }
-      C_elem->real = r0;
-      C_elem->imag = im0;
-      C_elem[1].real = r1;
-      C_elem[1].imag = im1;
-      C_elem[2].real = r2;
-      C_elem[2].imag = im2;
-      C_elem[3].real = r3;
-      C_elem[3].imag = im3;
-      C_elem[4].real = r4;
-      C_elem[4].imag = im4;
-      break;
-    case 6:
-      for (k = 0; k < a_cols; k++){
-        r0 += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
-        im0 += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
-        r1 += A[i][k].real * B[k][j+1].real - A[i][k].imag * B[k][j+1].imag;
-        im1 += A[i][k].real * B[k][j+1].imag + A[i][k].imag * B[k][j+1].real;
-        r2 += A[i][k].real * B[k][j+2].real - A[i][k].imag * B[k][j+2].imag;
-        im2 += A[i][k].real * B[k][j+2].imag + A[i][k].imag * B[k][j+2].real;
-        r3 += A[i][k].real * B[k][j+3].real - A[i][k].imag * B[k][j+3].imag;
-        im3 += A[i][k].real * B[k][j+3].imag + A[i][k].imag * B[k][j+3].real;
-        r4 += A[i][k].real * B[k][j+4].real - A[i][k].imag * B[k][j+4].imag;
-        im4 += A[i][k].real * B[k][j+4].imag + A[i][k].imag * B[k][j+4].real;
-        r5 += A[i][k].real * B[k][j+5].real - A[i][k].imag * B[k][j+5].imag;
-        im5 += A[i][k].real * B[k][j+5].imag + A[i][k].imag * B[k][j+5].real;
-      }
-      C_elem->real = r0;
-      C_elem->imag = im0;
-      C_elem[1].real = r1;
-      C_elem[1].imag = im1;
-      C_elem[2].real = r2;
-      C_elem[2].imag = im2;
-      C_elem[3].real = r3;
-      C_elem[3].imag = im3;
-      C_elem[4].real = r4;
-      C_elem[4].imag = im4;
-      C_elem[5].real = r5;
-      C_elem[5].imag = im5;
-      break;
-    case 7:
-      for (k = 0; k < a_cols; k++){
-        r0 += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
-        im0 += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
-        r1 += A[i][k].real * B[k][j+1].real - A[i][k].imag * B[k][j+1].imag;
-        im1 += A[i][k].real * B[k][j+1].imag + A[i][k].imag * B[k][j+1].real;
-        r2 += A[i][k].real * B[k][j+2].real - A[i][k].imag * B[k][j+2].imag;
-        im2 += A[i][k].real * B[k][j+2].imag + A[i][k].imag * B[k][j+2].real;
-        r3 += A[i][k].real * B[k][j+3].real - A[i][k].imag * B[k][j+3].imag;
-        im3 += A[i][k].real * B[k][j+3].imag + A[i][k].imag * B[k][j+3].real;
-        r4 += A[i][k].real * B[k][j+4].real - A[i][k].imag * B[k][j+4].imag;
-        im4 += A[i][k].real * B[k][j+4].imag + A[i][k].imag * B[k][j+4].real;
-        r5 += A[i][k].real * B[k][j+5].real - A[i][k].imag * B[k][j+5].imag;
-        im5 += A[i][k].real * B[k][j+5].imag + A[i][k].imag * B[k][j+5].real;
-        r6 += A[i][k].real * B[k][j+6].real - A[i][k].imag * B[k][j+6].imag;
-        im6 += A[i][k].real * B[k][j+6].imag + A[i][k].imag * B[k][j+6].real;
-      }
-      C_elem->real = r0;
-      C_elem->imag = im0;
-      C_elem[1].real = r1;
-      C_elem[1].imag = im1;
-      C_elem[2].real = r2;
-      C_elem[2].imag = im2;
-      C_elem[3].real = r3;
-      C_elem[3].imag = im3;
-      C_elem[4].real = r4;
-      C_elem[4].imag = im4;
-      C_elem[5].real = r5;
-      C_elem[5].imag = im5;
-      C_elem[6].real = r6;
-      C_elem[6].imag = im6;
-      break;
-    case 8:
-      for (k = 0; k < a_cols; k++){
-        r0 += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
-        im0 += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
-        r1 += A[i][k].real * B[k][j+1].real - A[i][k].imag * B[k][j+1].imag;
-        im1 += A[i][k].real * B[k][j+1].imag + A[i][k].imag * B[k][j+1].real;
-        r2 += A[i][k].real * B[k][j+2].real - A[i][k].imag * B[k][j+2].imag;
-        im2 += A[i][k].real * B[k][j+2].imag + A[i][k].imag * B[k][j+2].real;
-        r3 += A[i][k].real * B[k][j+3].real - A[i][k].imag * B[k][j+3].imag;
-        im3 += A[i][k].real * B[k][j+3].imag + A[i][k].imag * B[k][j+3].real;
-        r4 += A[i][k].real * B[k][j+4].real - A[i][k].imag * B[k][j+4].imag;
-        im4 += A[i][k].real * B[k][j+4].imag + A[i][k].imag * B[k][j+4].real;
-        r5 += A[i][k].real * B[k][j+5].real - A[i][k].imag * B[k][j+5].imag;
-        im5 += A[i][k].real * B[k][j+5].imag + A[i][k].imag * B[k][j+5].real;
-        r6 += A[i][k].real * B[k][j+6].real - A[i][k].imag * B[k][j+6].imag;
-        im6 += A[i][k].real * B[k][j+6].imag + A[i][k].imag * B[k][j+6].real;
-        r7 += A[i][k].real * B[k][j+7].real - A[i][k].imag * B[k][j+7].imag;
-        im7 += A[i][k].real * B[k][j+7].imag + A[i][k].imag * B[k][j+7].real;
-      }
-      C_elem->real = r0;
-      C_elem->imag = im0;
-      C_elem[1].real = r1;
-      C_elem[1].imag = im1;
-      C_elem[2].real = r2;
-      C_elem[2].imag = im2;
-      C_elem[3].real = r3;
-      C_elem[3].imag = im3;
-      C_elem[4].real = r4;
-      C_elem[4].imag = im4;
-      C_elem[5].real = r5;
-      C_elem[5].imag = im5;
-      C_elem[6].real = r6;
-      C_elem[6].imag = im6;
-      C_elem[7].real = r7;
-      C_elem[7].imag = im7;
-      break;
-  }
-}
-
 #define min( i, j  ) ( (i)<(j) ? (i): (j)  )
 
 void team_matmul(struct complex ** A, struct complex ** B, struct complex ** C, int a_rows, int a_cols, int b_cols) {
@@ -375,7 +170,208 @@ void team_matmul(struct complex ** A, struct complex ** B, struct complex ** C, 
   #pragma omp parallel for private(j) if (a_rows>200)
   for ( i = 0; i < a_rows; i++ ) {
     for( j = 0; j < b_cols; j+=8 ) {
-      calcSum(A,B,a_cols,i,j,&C[i][j],min(b_cols-j,8));
+      int k;
+      float r0 = 0.0;
+      float r1 = 0.0;
+      float r2 = 0.0;
+      float r3 = 0.0;
+      float r4 = 0.0;
+      float r5 = 0.0;
+      float r6 = 0.0;
+      float r7 = 0.0;
+      float im0 = 0.0;
+      float im1 = 0.0;
+      float im2 = 0.0;
+      float im3 = 0.0;
+      float im4 = 0.0;
+      float im5 = 0.0;
+      float im6 = 0.0;
+      float im7 = 0.0;
+      switch (min(b_cols-j,8)){
+        case 0:
+          printf("this shouldn't happen");
+          break;
+
+        case 1:
+          for (k = 0; k < a_cols; k++){
+            r0 += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
+            im0 += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
+          }
+          C[i][j].real = r0;
+          C[i][j].imag = im0;
+          break;
+
+        case 2:
+          for (k = 0; k < a_cols; k++){
+            r0 += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
+            im0 += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
+            r1 += A[i][k].real * B[k][j+1].real - A[i][k].imag * B[k][j+1].imag;
+            im1 += A[i][k].real * B[k][j+1].imag + A[i][k].imag * B[k][j+1].real;
+          }
+          C[i][j].real = r0;
+          C[i][j].imag = im0;
+          C[i][j+1].real = r1;
+          C[i][j+1].imag = im1;
+          break;
+
+        case 3:
+          for (k = 0; k < a_cols; k++){
+            r0 += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
+            im0 += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
+            r1 += A[i][k].real * B[k][j+1].real - A[i][k].imag * B[k][j+1].imag;
+            im1 += A[i][k].real * B[k][j+1].imag + A[i][k].imag * B[k][j+1].real;
+            r2 += A[i][k].real * B[k][j+2].real - A[i][k].imag * B[k][j+2].imag;
+            im2 += A[i][k].real * B[k][j+2].imag + A[i][k].imag * B[k][j+2].real;
+          }
+          C[i][j].real = r0;
+          C[i][j].imag = im0;
+          C[i][j+1].real = r1;
+          C[i][j+1].imag = im1;
+          C[i][j+2].real = r2;
+          C[i][j+2].imag = im2;
+          break;
+
+        case 4:
+          for (k = 0; k < a_cols; k++){
+            r0 += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
+            im0 += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
+            r1 += A[i][k].real * B[k][j+1].real - A[i][k].imag * B[k][j+1].imag;
+            im1 += A[i][k].real * B[k][j+1].imag + A[i][k].imag * B[k][j+1].real;
+            r2 += A[i][k].real * B[k][j+2].real - A[i][k].imag * B[k][j+2].imag;
+            im2 += A[i][k].real * B[k][j+2].imag + A[i][k].imag * B[k][j+2].real;
+            r3 += A[i][k].real * B[k][j+3].real - A[i][k].imag * B[k][j+3].imag;
+            im3 += A[i][k].real * B[k][j+3].imag + A[i][k].imag * B[k][j+3].real;
+          }
+          C[i][j].real = r0;
+          C[i][j].imag = im0;
+          C[i][j+1].real = r1;
+          C[i][j+1].imag = im1;
+          C[i][j+2].real = r2;
+          C[i][j+2].imag = im2;
+          C[i][j+3].real = r3;
+          C[i][j+3].imag = im3;
+          break;
+        case 5:
+          for (k = 0; k < a_cols; k++){
+            r0 += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
+            im0 += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
+            r1 += A[i][k].real * B[k][j+1].real - A[i][k].imag * B[k][j+1].imag;
+            im1 += A[i][k].real * B[k][j+1].imag + A[i][k].imag * B[k][j+1].real;
+            r2 += A[i][k].real * B[k][j+2].real - A[i][k].imag * B[k][j+2].imag;
+            im2 += A[i][k].real * B[k][j+2].imag + A[i][k].imag * B[k][j+2].real;
+            r3 += A[i][k].real * B[k][j+3].real - A[i][k].imag * B[k][j+3].imag;
+            im3 += A[i][k].real * B[k][j+3].imag + A[i][k].imag * B[k][j+3].real;
+            r4 += A[i][k].real * B[k][j+4].real - A[i][k].imag * B[k][j+4].imag;
+            im4 += A[i][k].real * B[k][j+4].imag + A[i][k].imag * B[k][j+4].real;
+          }
+          C[i][j].real = r0;
+          C[i][j].imag = im0;
+          C[i][j+1].real = r1;
+          C[i][j+1].imag = im1;
+          C[i][j+2].real = r2;
+          C[i][j+2].imag = im2;
+          C[i][j+3].real = r3;
+          C[i][j+3].imag = im3;
+          C[i][j+4].real = r4;
+          C[i][j+4].imag = im4;
+          break;
+        case 6:
+          for (k = 0; k < a_cols; k++){
+            r0 += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
+            im0 += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
+            r1 += A[i][k].real * B[k][j+1].real - A[i][k].imag * B[k][j+1].imag;
+            im1 += A[i][k].real * B[k][j+1].imag + A[i][k].imag * B[k][j+1].real;
+            r2 += A[i][k].real * B[k][j+2].real - A[i][k].imag * B[k][j+2].imag;
+            im2 += A[i][k].real * B[k][j+2].imag + A[i][k].imag * B[k][j+2].real;
+            r3 += A[i][k].real * B[k][j+3].real - A[i][k].imag * B[k][j+3].imag;
+            im3 += A[i][k].real * B[k][j+3].imag + A[i][k].imag * B[k][j+3].real;
+            r4 += A[i][k].real * B[k][j+4].real - A[i][k].imag * B[k][j+4].imag;
+            im4 += A[i][k].real * B[k][j+4].imag + A[i][k].imag * B[k][j+4].real;
+            r5 += A[i][k].real * B[k][j+5].real - A[i][k].imag * B[k][j+5].imag;
+            im5 += A[i][k].real * B[k][j+5].imag + A[i][k].imag * B[k][j+5].real;
+          }
+          C[i][j].real = r0;
+          C[i][j].imag = im0;
+          C[i][j+1].real = r1;
+          C[i][j+1].imag = im1;
+          C[i][j+2].real = r2;
+          C[i][j+2].imag = im2;
+          C[i][j+3].real = r3;
+          C[i][j+3].imag = im3;
+          C[i][j+4].real = r4;
+          C[i][j+4].imag = im4;
+          C[i][j+5].real = r5;
+          C[i][j+5].imag = im5;
+          break;
+        case 7:
+          for (k = 0; k < a_cols; k++){
+            r0 += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
+            im0 += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
+            r1 += A[i][k].real * B[k][j+1].real - A[i][k].imag * B[k][j+1].imag;
+            im1 += A[i][k].real * B[k][j+1].imag + A[i][k].imag * B[k][j+1].real;
+            r2 += A[i][k].real * B[k][j+2].real - A[i][k].imag * B[k][j+2].imag;
+            im2 += A[i][k].real * B[k][j+2].imag + A[i][k].imag * B[k][j+2].real;
+            r3 += A[i][k].real * B[k][j+3].real - A[i][k].imag * B[k][j+3].imag;
+            im3 += A[i][k].real * B[k][j+3].imag + A[i][k].imag * B[k][j+3].real;
+            r4 += A[i][k].real * B[k][j+4].real - A[i][k].imag * B[k][j+4].imag;
+            im4 += A[i][k].real * B[k][j+4].imag + A[i][k].imag * B[k][j+4].real;
+            r5 += A[i][k].real * B[k][j+5].real - A[i][k].imag * B[k][j+5].imag;
+            im5 += A[i][k].real * B[k][j+5].imag + A[i][k].imag * B[k][j+5].real;
+            r6 += A[i][k].real * B[k][j+6].real - A[i][k].imag * B[k][j+6].imag;
+            im6 += A[i][k].real * B[k][j+6].imag + A[i][k].imag * B[k][j+6].real;
+          }
+          C[i][j].real = r0;
+          C[i][j].imag = im0;
+          C[i][j+1].real = r1;
+          C[i][j+1].imag = im1;
+          C[i][j+2].real = r2;
+          C[i][j+2].imag = im2;
+          C[i][j+3].real = r3;
+          C[i][j+3].imag = im3;
+          C[i][j+4].real = r4;
+          C[i][j+4].imag = im4;
+          C[i][j+5].real = r5;
+          C[i][j+5].imag = im5;
+          C[i][j+6].real = r6;
+          C[i][j+6].imag = im6;
+          break;
+        case 8:
+          for (k = 0; k < a_cols; k++){
+            r0 += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
+            im0 += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
+            r1 += A[i][k].real * B[k][j+1].real - A[i][k].imag * B[k][j+1].imag;
+            im1 += A[i][k].real * B[k][j+1].imag + A[i][k].imag * B[k][j+1].real;
+            r2 += A[i][k].real * B[k][j+2].real - A[i][k].imag * B[k][j+2].imag;
+            im2 += A[i][k].real * B[k][j+2].imag + A[i][k].imag * B[k][j+2].real;
+            r3 += A[i][k].real * B[k][j+3].real - A[i][k].imag * B[k][j+3].imag;
+            im3 += A[i][k].real * B[k][j+3].imag + A[i][k].imag * B[k][j+3].real;
+            r4 += A[i][k].real * B[k][j+4].real - A[i][k].imag * B[k][j+4].imag;
+            im4 += A[i][k].real * B[k][j+4].imag + A[i][k].imag * B[k][j+4].real;
+            r5 += A[i][k].real * B[k][j+5].real - A[i][k].imag * B[k][j+5].imag;
+            im5 += A[i][k].real * B[k][j+5].imag + A[i][k].imag * B[k][j+5].real;
+            r6 += A[i][k].real * B[k][j+6].real - A[i][k].imag * B[k][j+6].imag;
+            im6 += A[i][k].real * B[k][j+6].imag + A[i][k].imag * B[k][j+6].real;
+            r7 += A[i][k].real * B[k][j+7].real - A[i][k].imag * B[k][j+7].imag;
+            im7 += A[i][k].real * B[k][j+7].imag + A[i][k].imag * B[k][j+7].real;
+          }
+          C[i][j].real = r0;
+          C[i][j].imag = im0;
+          C[i][j+1].real = r1;
+          C[i][j+1].imag = im1;
+          C[i][j+2].real = r2;
+          C[i][j+2].imag = im2;
+          C[i][j+3].real = r3;
+          C[i][j+3].imag = im3;
+          C[i][j+4].real = r4;
+          C[i][j+4].imag = im4;
+          C[i][j+5].real = r5;
+          C[i][j+5].imag = im5;
+          C[i][j+6].real = r6;
+          C[i][j+6].imag = im6;
+          C[i][j+7].real = r7;
+          C[i][j+7].imag = im7;
+          break;
+      }
     }
   }
 }
