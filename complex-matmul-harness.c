@@ -191,10 +191,18 @@ void calcSum(struct complex ** A, struct complex ** B, int a_cols, int i, int j,
 
     case 2:
       for (k = 0; k < a_cols; k++){
-        r0 += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
-        im0 += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
-        r1 += A[i][k].real * B[k][j+1].real - A[i][k].imag * B[k][j+1].imag;
-        im1 += A[i][k].real * B[k][j+1].imag + A[i][k].imag * B[k][j+1].real;
+        vb0 = _mm_load_ps(&B[k][j].real);
+        va0 = _mm_load1_ps(&A[i][k].real);
+        va1 = _mm_load1_ps(&A[i][k].imag);
+        vm0 = _mm_mul_ps (vb0,va0);
+        vm1 = _mm_mul_ps (vb0,va1);
+        _mm_store_ps (scratch, vm0);
+        _mm_store_ps (&scratch[4], vm1);
+
+        r0 += scratch[0] - scratch[5];
+        im0 += scratch[1] + scratch[4];
+        r1 += scratch[2] - scratch[7];
+        im1 += scratch[3] + scratch[6];
       }
       C_elem->real = r0;
       C_elem->imag = im0;
@@ -204,10 +212,18 @@ void calcSum(struct complex ** A, struct complex ** B, int a_cols, int i, int j,
 
     case 3:
       for (k = 0; k < a_cols; k++){
-        r0 += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
-        im0 += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
-        r1 += A[i][k].real * B[k][j+1].real - A[i][k].imag * B[k][j+1].imag;
-        im1 += A[i][k].real * B[k][j+1].imag + A[i][k].imag * B[k][j+1].real;
+        vb0 = _mm_load_ps(&B[k][j].real);
+        va0 = _mm_load1_ps(&A[i][k].real);
+        va1 = _mm_load1_ps(&A[i][k].imag);
+        vm0 = _mm_mul_ps (vb0,va0);
+        vm1 = _mm_mul_ps (vb0,va1);
+        //_mm_store_ps (scratch, vm0);
+        //_mm_store_ps (&scratch[4], vm1);
+
+        r0 += scratch[0] - scratch[5];
+        im0 += scratch[1] + scratch[4];
+        r1 += scratch[2] - scratch[7];
+        im1 += scratch[3] + scratch[6];
         r2 += A[i][k].real * B[k][j+2].real - A[i][k].imag * B[k][j+2].imag;
         im2 += A[i][k].real * B[k][j+2].imag + A[i][k].imag * B[k][j+2].real;
       }
@@ -252,10 +268,9 @@ void calcSum(struct complex ** A, struct complex ** B, int a_cols, int i, int j,
         vm2 = _mm_mul_ps (vb1,va0);
         vm3 = _mm_mul_ps (vb1,va1);
         _mm_store_ps (scratch, vm0);
-        _mm_store_ps (scratch+32, vm1);
-        _mm_store_ps (scratch+64, vm2);
-        _mm_store_ps (scratch+96, vm3);
-
+        _mm_store_ps (&scratch[4], vm1);
+        _mm_store_ps (&scratch[8], vm2);
+        _mm_store_ps (&scratch[12], vm3);
 
         r0 += scratch[0] - scratch[5];
         im0 += scratch[1] + scratch[4];
