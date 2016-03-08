@@ -169,12 +169,18 @@ void calcSum(struct complex ** A, struct complex ** B, int a_cols, int i, int j,
   float r1 = 0.0;
   float r2 = 0.0;
   float r3 = 0.0;
+  float r4 = 0.0;
+  float r5 = 0.0;
+  float r6 = 0.0;
+  float r7 = 0.0;
   float im0 = 0.0;
   float im1 = 0.0;
   float im2 = 0.0;
   float im3 = 0.0;
-  __m128 va0,va1,vb0,vb1,vm0,vm1,vm2,vm3;
-  float* scratch = malloc(128);
+  float im4 = 0.0;
+  float im5 = 0.0;
+  float im6 = 0.0;
+  float im7 = 0.0;
   switch (j_inc){
     case 0:
       printf("this shouldn't happen");
@@ -191,18 +197,10 @@ void calcSum(struct complex ** A, struct complex ** B, int a_cols, int i, int j,
 
     case 2:
       for (k = 0; k < a_cols; k++){
-        vb0 = _mm_load_ps(&B[k][j].real);
-        va0 = _mm_load1_ps(&A[i][k].real);
-        va1 = _mm_load1_ps(&A[i][k].imag);
-        vm0 = _mm_mul_ps (vb0,va0);
-        vm1 = _mm_mul_ps (vb0,va1);
-        _mm_store_ps (scratch, vm0);
-        _mm_store_ps (&scratch[4], vm1);
-
-        r0 += scratch[0] - scratch[5];
-        im0 += scratch[1] + scratch[4];
-        r1 += scratch[2] - scratch[7];
-        im1 += scratch[3] + scratch[6];
+        r0 += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
+        im0 += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
+        r1 += A[i][k].real * B[k][j+1].real - A[i][k].imag * B[k][j+1].imag;
+        im1 += A[i][k].real * B[k][j+1].imag + A[i][k].imag * B[k][j+1].real;
       }
       C_elem->real = r0;
       C_elem->imag = im0;
@@ -212,18 +210,10 @@ void calcSum(struct complex ** A, struct complex ** B, int a_cols, int i, int j,
 
     case 3:
       for (k = 0; k < a_cols; k++){
-        vb0 = _mm_load_ps(&B[k][j].real);
-        va0 = _mm_load1_ps(&A[i][k].real);
-        va1 = _mm_load1_ps(&A[i][k].imag);
-        vm0 = _mm_mul_ps (vb0,va0);
-        vm1 = _mm_mul_ps (vb0,va1);
-        //_mm_store_ps (scratch, vm0);
-        //_mm_store_ps (&scratch[4], vm1);
-
-        r0 += scratch[0] - scratch[5];
-        im0 += scratch[1] + scratch[4];
-        r1 += scratch[2] - scratch[7];
-        im1 += scratch[3] + scratch[6];
+        r0 += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
+        im0 += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
+        r1 += A[i][k].real * B[k][j+1].real - A[i][k].imag * B[k][j+1].imag;
+        im1 += A[i][k].real * B[k][j+1].imag + A[i][k].imag * B[k][j+1].real;
         r2 += A[i][k].real * B[k][j+2].real - A[i][k].imag * B[k][j+2].imag;
         im2 += A[i][k].real * B[k][j+2].imag + A[i][k].imag * B[k][j+2].real;
       }
@@ -237,49 +227,14 @@ void calcSum(struct complex ** A, struct complex ** B, int a_cols, int i, int j,
 
     case 4:
       for (k = 0; k < a_cols; k++){
-        // load B[k][j].real + load B[k][j].imag + load B[k][j+1].real + load B[k][j+1].imag into vector
-        // load1 A[i][k].real
-        // load1 A[i][k].imag
-        // do two vector mults, store bits into scratch, possibly do 2 / 4 of this process
-        //
-        //
-        // vb0 = B[k][j].real B[k][j].imag B[k][j+1].real B[k][j+1].imag
-        // va0 = A[i][k].real A[i][k].real A[i][k].real   A[i][k].real
-        // vm0 =     0            1            2                3
-        //
-        // vb0 = B[k][j].real B[k][j].imag B[k][j+1].real B[k][j+1].imag
-        // va1 = A[i][k].imag A[i][k].imag A[i][k].imag   A[i][k].imag
-        // vm1 =     4            5            6                7
-        //
-        // vb1 = B[k][j+2].real B[k][j+2].imag B[k][j+3].real B[k][j+3].imag
-        // va0 = A[i][k].real A[i][k].real A[i][k].real   A[i][k].real
-        // vm3 =     8            9            10               11
-        //
-        // vb1 = B[k][j+2].real B[k][j+2].imag B[k][j+3].real B[k][j+3].imag
-        // va1 = A[i][k].imag A[i][k].imag A[i][k].imag   A[i][k].imag
-        // vm3 =     12           13           14               15
-
-        vb0 = _mm_load_ps(&B[k][j].real);
-        vb1 = _mm_load_ps(&B[k][j+2].real);
-        va0 = _mm_load1_ps(&A[i][k].real);
-        va1 = _mm_load1_ps(&A[i][k].imag);
-        vm0 = _mm_mul_ps (vb0,va0);
-        vm1 = _mm_mul_ps (vb0,va1);
-        vm2 = _mm_mul_ps (vb1,va0);
-        vm3 = _mm_mul_ps (vb1,va1);
-        _mm_store_ps (scratch, vm0);
-        _mm_store_ps (&scratch[4], vm1);
-        _mm_store_ps (&scratch[8], vm2);
-        _mm_store_ps (&scratch[12], vm3);
-
-        r0 += scratch[0] - scratch[5];
-        im0 += scratch[1] + scratch[4];
-        r1 += scratch[2] - scratch[7];
-        im1 += scratch[3] + scratch[6];
-        r2 += scratch[8] - scratch[13];
-        im2 += scratch[9] + scratch[12];
-        r3 += scratch[10] - scratch[15];
-        im3 += scratch[11] + scratch[14];
+        r0 += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
+        im0 += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
+        r1 += A[i][k].real * B[k][j+1].real - A[i][k].imag * B[k][j+1].imag;
+        im1 += A[i][k].real * B[k][j+1].imag + A[i][k].imag * B[k][j+1].real;
+        r2 += A[i][k].real * B[k][j+2].real - A[i][k].imag * B[k][j+2].imag;
+        im2 += A[i][k].real * B[k][j+2].imag + A[i][k].imag * B[k][j+2].real;
+        r3 += A[i][k].real * B[k][j+3].real - A[i][k].imag * B[k][j+3].imag;
+        im3 += A[i][k].real * B[k][j+3].imag + A[i][k].imag * B[k][j+3].real;
       }
       C_elem->real = r0;
       C_elem->imag = im0;
@@ -290,19 +245,137 @@ void calcSum(struct complex ** A, struct complex ** B, int a_cols, int i, int j,
       C_elem[3].real = r3;
       C_elem[3].imag = im3;
       break;
+    case 5:
+      for (k = 0; k < a_cols; k++){
+        r0 += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
+        im0 += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
+        r1 += A[i][k].real * B[k][j+1].real - A[i][k].imag * B[k][j+1].imag;
+        im1 += A[i][k].real * B[k][j+1].imag + A[i][k].imag * B[k][j+1].real;
+        r2 += A[i][k].real * B[k][j+2].real - A[i][k].imag * B[k][j+2].imag;
+        im2 += A[i][k].real * B[k][j+2].imag + A[i][k].imag * B[k][j+2].real;
+        r3 += A[i][k].real * B[k][j+3].real - A[i][k].imag * B[k][j+3].imag;
+        im3 += A[i][k].real * B[k][j+3].imag + A[i][k].imag * B[k][j+3].real;
+        r4 += A[i][k].real * B[k][j+4].real - A[i][k].imag * B[k][j+4].imag;
+        im4 += A[i][k].real * B[k][j+4].imag + A[i][k].imag * B[k][j+4].real;
+      }
+      C_elem->real = r0;
+      C_elem->imag = im0;
+      C_elem[1].real = r1;
+      C_elem[1].imag = im1;
+      C_elem[2].real = r2;
+      C_elem[2].imag = im2;
+      C_elem[3].real = r3;
+      C_elem[3].imag = im3;
+      C_elem[4].real = r4;
+      C_elem[4].imag = im4;
+      break;
+    case 6:
+      for (k = 0; k < a_cols; k++){
+        r0 += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
+        im0 += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
+        r1 += A[i][k].real * B[k][j+1].real - A[i][k].imag * B[k][j+1].imag;
+        im1 += A[i][k].real * B[k][j+1].imag + A[i][k].imag * B[k][j+1].real;
+        r2 += A[i][k].real * B[k][j+2].real - A[i][k].imag * B[k][j+2].imag;
+        im2 += A[i][k].real * B[k][j+2].imag + A[i][k].imag * B[k][j+2].real;
+        r3 += A[i][k].real * B[k][j+3].real - A[i][k].imag * B[k][j+3].imag;
+        im3 += A[i][k].real * B[k][j+3].imag + A[i][k].imag * B[k][j+3].real;
+        r4 += A[i][k].real * B[k][j+4].real - A[i][k].imag * B[k][j+4].imag;
+        im4 += A[i][k].real * B[k][j+4].imag + A[i][k].imag * B[k][j+4].real;
+        r5 += A[i][k].real * B[k][j+5].real - A[i][k].imag * B[k][j+5].imag;
+        im5 += A[i][k].real * B[k][j+5].imag + A[i][k].imag * B[k][j+5].real;
+      }
+      C_elem->real = r0;
+      C_elem->imag = im0;
+      C_elem[1].real = r1;
+      C_elem[1].imag = im1;
+      C_elem[2].real = r2;
+      C_elem[2].imag = im2;
+      C_elem[3].real = r3;
+      C_elem[3].imag = im3;
+      C_elem[4].real = r4;
+      C_elem[4].imag = im4;
+      C_elem[5].real = r5;
+      C_elem[5].imag = im5;
+      break;
+    case 7:
+      for (k = 0; k < a_cols; k++){
+        r0 += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
+        im0 += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
+        r1 += A[i][k].real * B[k][j+1].real - A[i][k].imag * B[k][j+1].imag;
+        im1 += A[i][k].real * B[k][j+1].imag + A[i][k].imag * B[k][j+1].real;
+        r2 += A[i][k].real * B[k][j+2].real - A[i][k].imag * B[k][j+2].imag;
+        im2 += A[i][k].real * B[k][j+2].imag + A[i][k].imag * B[k][j+2].real;
+        r3 += A[i][k].real * B[k][j+3].real - A[i][k].imag * B[k][j+3].imag;
+        im3 += A[i][k].real * B[k][j+3].imag + A[i][k].imag * B[k][j+3].real;
+        r4 += A[i][k].real * B[k][j+4].real - A[i][k].imag * B[k][j+4].imag;
+        im4 += A[i][k].real * B[k][j+4].imag + A[i][k].imag * B[k][j+4].real;
+        r5 += A[i][k].real * B[k][j+5].real - A[i][k].imag * B[k][j+5].imag;
+        im5 += A[i][k].real * B[k][j+5].imag + A[i][k].imag * B[k][j+5].real;
+        r6 += A[i][k].real * B[k][j+6].real - A[i][k].imag * B[k][j+6].imag;
+        im6 += A[i][k].real * B[k][j+6].imag + A[i][k].imag * B[k][j+6].real;
+      }
+      C_elem->real = r0;
+      C_elem->imag = im0;
+      C_elem[1].real = r1;
+      C_elem[1].imag = im1;
+      C_elem[2].real = r2;
+      C_elem[2].imag = im2;
+      C_elem[3].real = r3;
+      C_elem[3].imag = im3;
+      C_elem[4].real = r4;
+      C_elem[4].imag = im4;
+      C_elem[5].real = r5;
+      C_elem[5].imag = im5;
+      C_elem[6].real = r6;
+      C_elem[6].imag = im6;
+      break;
+    case 8:
+      for (k = 0; k < a_cols; k++){
+        r0 += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
+        im0 += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
+        r1 += A[i][k].real * B[k][j+1].real - A[i][k].imag * B[k][j+1].imag;
+        im1 += A[i][k].real * B[k][j+1].imag + A[i][k].imag * B[k][j+1].real;
+        r2 += A[i][k].real * B[k][j+2].real - A[i][k].imag * B[k][j+2].imag;
+        im2 += A[i][k].real * B[k][j+2].imag + A[i][k].imag * B[k][j+2].real;
+        r3 += A[i][k].real * B[k][j+3].real - A[i][k].imag * B[k][j+3].imag;
+        im3 += A[i][k].real * B[k][j+3].imag + A[i][k].imag * B[k][j+3].real;
+        r4 += A[i][k].real * B[k][j+4].real - A[i][k].imag * B[k][j+4].imag;
+        im4 += A[i][k].real * B[k][j+4].imag + A[i][k].imag * B[k][j+4].real;
+        r5 += A[i][k].real * B[k][j+5].real - A[i][k].imag * B[k][j+5].imag;
+        im5 += A[i][k].real * B[k][j+5].imag + A[i][k].imag * B[k][j+5].real;
+        r6 += A[i][k].real * B[k][j+6].real - A[i][k].imag * B[k][j+6].imag;
+        im6 += A[i][k].real * B[k][j+6].imag + A[i][k].imag * B[k][j+6].real;
+        r7 += A[i][k].real * B[k][j+7].real - A[i][k].imag * B[k][j+7].imag;
+        im7 += A[i][k].real * B[k][j+7].imag + A[i][k].imag * B[k][j+7].real;
+      }
+      C_elem->real = r0;
+      C_elem->imag = im0;
+      C_elem[1].real = r1;
+      C_elem[1].imag = im1;
+      C_elem[2].real = r2;
+      C_elem[2].imag = im2;
+      C_elem[3].real = r3;
+      C_elem[3].imag = im3;
+      C_elem[4].real = r4;
+      C_elem[4].imag = im4;
+      C_elem[5].real = r5;
+      C_elem[5].imag = im5;
+      C_elem[6].real = r6;
+      C_elem[6].imag = im6;
+      C_elem[7].real = r7;
+      C_elem[7].imag = im7;
+      break;
   }
 }
 
 #define min( i, j  ) ( (i)<(j) ? (i): (j)  )
 
 void team_matmul(struct complex ** A, struct complex ** B, struct complex ** C, int a_rows, int a_cols, int b_cols) {
-  int i, j, k, j_inc;
-  struct complex sum;
-  #pragma omp parallel for collapse(2)
+  int i, j;
+  #pragma omp parallel for private(j) if (a_rows>200)
   for ( i = 0; i < a_rows; i++ ) {
-    for( j = 0; j < b_cols; j+=4 ) {
-      j_inc = min(b_cols-j,4);
-      calcSum(A,B,a_cols,i,j,&C[i][j],j_inc);
+    for( j = 0; j < b_cols; j+=8 ) {
+      calcSum(A,B,a_cols,i,j,&C[i][j],min(b_cols-j,8));
     }
   }
 }
