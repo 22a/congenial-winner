@@ -163,49 +163,21 @@ void calcSumOld(struct complex ** A, struct complex ** B, int a_cols, int i, int
   C_elem->imag = im;
 }
 
-#define min( i, j  ) ( (i)<(j) ? (i): (j)  )
+#define min(i,j)((i)<(j)?(i):(j))
 
 void team_matmul(struct complex ** A, struct complex ** B, struct complex ** C, int a_rows, int a_cols, int b_cols) {
   int i, j, k;
-  float r,im;
-  struct complex sum;
-#pragma omp parallel for if (a_rows > 100)
+  float s0,s1;
+  #pragma omp parallel for if (a_rows > 100) private(j,k,s0,s1)
   for ( i = 0; i < a_rows; i++ ) {
-    for( k = 0; k < a_cols; k+=4 ) {
+    for( k = 0; k < a_cols; k++ ) {
       for (j = 0; j < b_cols; j++){
-        switch (a_cols-k,4){
-          case 1:
-            C[i][j].real += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
-            C[i][j].imag += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
-            break;
-
-          case 2:
-            C[i][j].real += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
-            C[i][j].real += A[i][k+1].real * B[k+1][j].real - A[i][k+1].imag * B[k+1][j].imag;
-            C[i][j].imag += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
-            C[i][j].imag += A[i][k+1].real * B[k+1][j].imag + A[i][k+1].imag * B[k+1][j].real;
-            break;
-
-          case 3:
-            C[i][j].real += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
-            C[i][j].real += A[i][k+1].real * B[k+1][j].real - A[i][k+1].imag * B[k+1][j].imag;
-            C[i][j].real += A[i][k+2].real * B[k+2][j].real - A[i][k+2].imag * B[k+2][j].imag;
-            C[i][j].imag += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
-            C[i][j].imag += A[i][k+1].real * B[k+1][j].imag + A[i][k+1].imag * B[k+1][j].real;
-            C[i][j].imag += A[i][k+2].real * B[k+2][j].imag + A[i][k+2].imag * B[k+2][j].real;
-            break;
-
-          case 4:
-            C[i][j].real += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
-            C[i][j].real += A[i][k+1].real * B[k+1][j].real - A[i][k+1].imag * B[k+1][j].imag;
-            C[i][j].real += A[i][k+2].real * B[k+2][j].real - A[i][k+2].imag * B[k+2][j].imag;
-            C[i][j].real += A[i][k+3].real * B[k+3][j].real - A[i][k+3].imag * B[k+3][j].imag;
-            C[i][j].imag += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
-            C[i][j].imag += A[i][k+1].real * B[k+1][j].imag + A[i][k+1].imag * B[k+1][j].real;
-            C[i][j].imag += A[i][k+2].real * B[k+2][j].imag + A[i][k+2].imag * B[k+2][j].real;
-            C[i][j].imag += A[i][k+3].real * B[k+3][j].imag + A[i][k+3].imag * B[k+3][j].real;
-            break;
-        }
+        s0 = A[i][k].real * B[k][j].real;
+        s0 -= A[i][k].imag * B[k][j].imag;
+        s1 = A[i][k].real * B[k][j].imag;
+        s1 += A[i][k].imag * B[k][j].real;
+        C[i][j].real += s0;
+        C[i][j].imag += s1;
       }
     }
   }
