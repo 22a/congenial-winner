@@ -151,39 +151,27 @@ void matmul(struct complex ** A, struct complex ** B, struct complex ** C, int a
   }
 }
 
-#define min(i,j)((i)<(j)?(i):(j))
-
-struct complex** transpose_matrix(int rows, int cols, struct complex** m)
-{
-  int i,j;
-  struct complex ** t = new_empty_matrix(cols, rows);
-#pragma omp parallel for if (rows > 100) private(j)
-  for (i = 0; i < rows; i++) {
-    for (j = 0; j < cols; j++) {
-      t[j][i] = m[i][j];
-    }
-  }
-}
-
 void team_matmul(struct complex ** A, struct complex ** B, struct complex ** C, int a_rows, int a_cols, int b_cols) {
-  //struct complex ** Bt = transpose_matrix(a_cols,b_cols,B);
+  int i, j, k;
   float s0,s1;
-  int i,j,k;
-#pragma omp parallel for if (a_rows > 100) private(s0,s1,j,k)
-  for (i = 0; i < a_rows; i++) {
-    for (j = 0; j < a_cols; j++) {
-      for (k = 0; k < b_cols; k++) {
-        s0 = A[i][k].real * B[k][j].real;
-        s0 -= A[i][k].imag * B[k][j].imag;
-        s1 = A[i][k].real * B[k][j].imag;
-        s1 += A[i][k].imag * B[k][j].real;
-        C[i][j].real += s0;
-        C[i][j].imag += s1;
+  #pragma omp parallel for if (a_rows > 100) private(j,k)
+  for ( i = 0; i < a_rows; i++ ) {
+    struct complex* a = A[i];
+    struct complex* c = C[i];
+    for( k = 0; k < a_cols; k++ ) {
+      struct complex* b = B[k];
+      struct complex ak = a[k];
+      for (j = 0; j < b_cols; j++){
+        s0 = ak.real * b[j].real;
+        s0 -= ak.imag * b[j].imag;
+        s1 = ak.real * b[j].imag;
+        s1 += ak.imag * b[j].real;
+        c[j].real += s0;
+        c[j].imag += s1;
       }
     }
   }
 }
-
 
 long long time_diff(struct timeval * start, struct timeval * end) {
   return (end->tv_sec - start->tv_sec) * 1000000L + (end->tv_usec - start->tv_usec);
