@@ -151,27 +151,28 @@ void matmul(struct complex ** A, struct complex ** B, struct complex ** C, int a
   }
 }
 
-void calcSumOld(struct complex ** A, struct complex ** B, int a_cols, int i, int j, struct complex * C_elem) {
-  int k;
-  float r = 0.0;
-  float im = 0.0;
-  for (k = 0; k < a_cols; k++){
-    r += A[i][k].real * B[k][j].real - A[i][k].imag * B[k][j].imag;
-    im += A[i][k].real * B[k][j].imag + A[i][k].imag * B[k][j].real;
-  }
-  C_elem->real = r;
-  C_elem->imag = im;
-}
-
 #define min(i,j)((i)<(j)?(i):(j))
 
+struct complex** transpose_matrix(int rows, int cols, struct complex** m)
+{
+  int i,j;
+  struct complex ** t = new_empty_matrix(cols, rows);
+#pragma omp parallel for if (rows > 100) private(j)
+  for (i = 0; i < rows; i++) {
+    for (j = 0; j < cols; j++) {
+      t[j][i] = m[i][j];
+    }
+  }
+}
+
 void team_matmul(struct complex ** A, struct complex ** B, struct complex ** C, int a_rows, int a_cols, int b_cols) {
-  int i, j, k;
+  //struct complex ** Bt = transpose_matrix(a_cols,b_cols,B);
   float s0,s1;
-  #pragma omp parallel for if (a_rows > 100) private(j,k,s0,s1)
-  for ( i = 0; i < a_rows; i++ ) {
-    for( k = 0; k < a_cols; k++ ) {
-      for (j = 0; j < b_cols; j++){
+  int i,j,k;
+#pragma omp parallel for if (a_rows > 100) private(s0,s1,j,k)
+  for (i = 0; i < a_rows; i++) {
+    for (j = 0; j < a_cols; j++) {
+      for (k = 0; k < b_cols; k++) {
         s0 = A[i][k].real * B[k][j].real;
         s0 -= A[i][k].imag * B[k][j].imag;
         s1 = A[i][k].real * B[k][j].imag;
