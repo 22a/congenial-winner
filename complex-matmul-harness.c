@@ -168,66 +168,27 @@ void calcSum(struct complex ** A, struct complex ** B, int a_cols, int i, int j,
   float s0,s1,s2,s3;
   __m128 v0,v1,va;
   float r0 = 0.0;
-  float r1 = 0.0;
-  float r2 = 0.0;
-  float r3 = 0.0;
   float im0 = 0.0;
-  float im1 = 0.0;
-  float im2 = 0.0;
-  float im3 = 0.0;
-  for (k = 0; k < a_cols; k++){
     v0 = _mm_setr_ps(A[i][k].real,A[i][k].imag,A[i][k].real,A[i][k].imag);
     v1 = _mm_setr_ps(B[k][j].real,B[k][j].imag,B[k][j].imag,B[k][j].real);
     va = _mm_mul_ps (v0,v1);
+  for (k = 0; k < a_cols; k++){
     s0 = _mm_extract_ps(va,0);
     s1 = _mm_extract_ps(va,1);
     s2 = _mm_extract_ps(va,2);
     s3 = _mm_extract_ps(va,3);
     r0 += s0 + s1;
     im0 += s2 + s3;
-    v1 = _mm_setr_ps(B[k][j+1].real,B[k][j+1].imag,B[k][j+1].imag,B[k][j+1].real);
-    va = _mm_mul_ps (v0,v1);
-    s0 = _mm_extract_ps(va,0);
-    s1 = _mm_extract_ps(va,1);
-    s2 = _mm_extract_ps(va,2);
-    s3 = _mm_extract_ps(va,3);
-    r1 += s0 + s1;
-    im1 += s2 + s3;
-    v1 = _mm_setr_ps(B[k][j+2].real,B[k][j+2].imag,B[k][j+2].imag,B[k][j+2].real);
-    va = _mm_mul_ps (v0,v1);
-    s0 = _mm_extract_ps(va,0);
-    s1 = _mm_extract_ps(va,1);
-    s2 = _mm_extract_ps(va,2);
-    s3 = _mm_extract_ps(va,3);
-    r2 += s0 + s1;
-    im2 += s2 + s3;
-    v1 = _mm_setr_ps(B[k][j+3].real,B[k][j+3].imag,B[k][j+3].imag,B[k][j+3].real);
-    va = _mm_mul_ps (v0,v1);
-    s0 = _mm_extract_ps(va,0);
-    s1 = _mm_extract_ps(va,1);
-    s2 = _mm_extract_ps(va,2);
-    s3 = _mm_extract_ps(va,3);
-    r3 += s0 + s1;
-    im3 += s2 + s3;
   }
   C_elem->real = r0;
   C_elem->imag = im0;
-  (C_elem+(sizeof(struct complex)))->real = r1;
-  (C_elem+(sizeof(struct complex)))->imag = im1;
-  (C_elem+(sizeof(struct complex)*2))->real = r2;
-  (C_elem+(sizeof(struct complex)*2))->imag = im2;
-  (C_elem+(sizeof(struct complex)*3))->real = r3;
-  (C_elem+(sizeof(struct complex)*3))->imag = im3;
 }
 
 void team_matmul(struct complex ** A, struct complex ** B, struct complex ** C, int a_rows, int a_cols, int b_cols) {
   int i, j, k;
-  struct complex sum;
-  #pragma omp parallel for collapse(2)
   for ( i = 0; i < a_rows; i++ ) {
-    for( j = 0; j < b_cols; j+=4 ) {
-      calcSum(A,B,a_cols,i,j,&C[i][j]);
-    }
+    j=0;
+    calcSum(A,B,a_cols,i,j,&C[i][j]);
   }
 }
 
